@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "description": "",
   "main": "src/index.js",
+  "bin": {
+    "@johannwagner/gitlab-tag-poll": "src/index.js",
+    "gitlab-tag-poll": "src/index.js"
+  },
   "keywords": [],
   "author": "Johann Wagner",
   "license": "MIT",
