@@ -4,8 +4,8 @@
   "description": "",
   "main": "src/index.js",
   "bin": {
-    "@johannwagner/gitlab-tag-poll": "src/index.js",
-    "gitlab-tag-poll": "src/index.js"
+    "@johannwagner/gitlab-tag-poll": "./src/index.js",
+    "gitlab-tag-poll": "./src/index.js"
   },
   "keywords": [],
   "author": "Johann Wagner",
