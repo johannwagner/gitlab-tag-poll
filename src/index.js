@@ -58,6 +58,11 @@ logger.debug('groupName', groupName);
     });
 
     latestTags.forEach((t) => {
+        if (!t.latestTag) {
+            logger.warn(`Ignoring ${t.project.name}, because there are no tags.`);
+            return;
+        }
+
         logger.info(`${t.project.name}: ${t.latestTag.version}`);
     });
 
