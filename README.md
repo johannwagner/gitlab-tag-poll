@@ -11,6 +11,7 @@
 ```
 export GITLAB_TAG_POLL_URL=<GITLAB_URL>
 export GITLAB_TAG_POLL_TOKEN=<SECRET_TOKEN>
+npm i -g @johannwagner/gitlab-tag-poll
 npx @johannwagner/gitlab-tag-poll <PATH_OF_GROUP>
 ```
 
