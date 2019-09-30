@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const Logger = require('logplease');
 const gitlab = require('gitlab');
 const semver = require('semver');
