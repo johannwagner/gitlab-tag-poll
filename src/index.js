@@ -27,14 +27,14 @@ const [,,
 
 logger.debug('groupName', groupName);
 
-(async () => {
+const initFunction = async () => {
     const group = await gitlabInstance.Groups.show(groupName);
     logger.debug('Found Group: ', group.id);
 
     const tagsPerProjectPromises = group.projects.map(async (p) => {
         return {
             project: p,
-            tags: await gitlabInstance.Tags.all(p.id),
+            tags: await gitlabInstance.Tags.all(p.id).catch(() => null),
         };
     });
 
@@ -42,6 +42,13 @@ logger.debug('groupName', groupName);
 
     const latestTags = tagsPerProject.map((projectWithTags) => {
         let latestTag = null;
+
+        if (projectWithTags.tags === null) {
+            logger.warn(`Ignoring ${projectWithTags.project.name}, because we could not load tags.`);
+            return {
+                ...projectWithTags,
+            };
+        }
 
         projectWithTags.tags.forEach((tag) => {
             const unifiedTag = semver.coerce(tag.name);
@@ -67,4 +74,9 @@ logger.debug('groupName', groupName);
     });
 
     process.exit(0);
-})();
+};
+
+initFunction().catch((e) => {
+    console.error(e);
+    process.exit(1);
+});
