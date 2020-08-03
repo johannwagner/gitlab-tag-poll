@@ -77,11 +77,11 @@ const initFunction = async () => {
         });
     });
 
-    const sortedArray = _.sortBy(outputArray, e => e.name);
+    const sortedArray = _.sortBy(outputArray, (e) => e.name);
 
     switch (outputFormat) {
     case 'inline': {
-        sortedArray.forEach(e => console.log(`${e.name}: ${e.version}`));
+        sortedArray.forEach((e) => console.log(`${e.name}: ${e.version}`));
         break;
     }
     case 'json': {

@@ -16,6 +16,7 @@
       "error",
       4
     ],
-    "arrow-body-style": "off"
+    "arrow-body-style": "off",
+    "no-console": "off"
   }
 }
