@@ -1,10 +1,8 @@
 #!/usr/bin/env node
 
-const Logger = require('logplease');
+const _ = require('lodash');
 const gitlab = require('gitlab');
 const semver = require('semver');
-
-const logger = Logger.create('index.js');
 
 const {
     GITLAB_TAG_POLL_URL,
@@ -12,7 +10,7 @@ const {
 } = process.env;
 
 if (!GITLAB_TAG_POLL_TOKEN || !GITLAB_TAG_POLL_URL) {
-    logger.error('GITLAB_TAG_POLL_TOKEN and GITLAB_TAG_POLL_URL must be defined in environment.');
+    console.error('GITLAB_TAG_POLL_TOKEN and GITLAB_TAG_POLL_URL must be defined in environment.');
     process.exit(1);
 }
 
@@ -23,13 +21,14 @@ const gitlabInstance = new gitlab.Gitlab({
 
 const [,,
     groupName,
+    outputFormat = 'inline',
 ] = process.argv;
 
-logger.debug('groupName', groupName);
+console.warn('groupName', groupName);
 
 const initFunction = async () => {
     const group = await gitlabInstance.Groups.show(groupName);
-    logger.debug('Found Group: ', group.id);
+    console.warn('Found Group: ', group.id);
 
     const tagsPerProjectPromises = group.projects.map(async (p) => {
         return {
@@ -44,7 +43,7 @@ const initFunction = async () => {
         let latestTag = null;
 
         if (projectWithTags.tags === null) {
-            logger.warn(`Ignoring ${projectWithTags.project.name}, because we could not load tags.`);
+            console.warn(`Ignoring ${projectWithTags.project.name}, because we could not load tags.`);
             return {
                 ...projectWithTags,
             };
@@ -64,14 +63,35 @@ const initFunction = async () => {
         };
     });
 
+    const outputArray = [];
+
     latestTags.forEach((t) => {
         if (!t.latestTag) {
-            logger.warn(`Ignoring ${t.project.name}, because there are no tags.`);
+            console.warn(`Ignoring ${t.project.name}, because there are no tags.`);
             return;
         }
 
-        logger.info(`${t.project.name}: ${t.latestTag.version}`);
+        outputArray.push({
+            name: t.project.name,
+            version: t.latestTag.version,
+        });
     });
+
+    const sortedArray = _.sortBy(outputArray, e => e.name);
+
+    switch (outputFormat) {
+    case 'inline': {
+        sortedArray.forEach(e => console.log(`${e.name}: ${e.version}`));
+        break;
+    }
+    case 'json': {
+        console.log(JSON.stringify(sortedArray, null, '  '));
+        break;
+    }
+    default: {
+        throw Error('Invalid Output Format');
+    }
+    }
 
     process.exit(0);
 };
